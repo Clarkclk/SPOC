@@ -296,7 +296,7 @@ class fs:
         return tinum
 
     def createFile(self, parent, newfile, ftype):
-    # YOUR CODE, YOUR ID
+    # YOUR CODE, 2012011304
         # find info about parent
         pnum = self.nameToInum[parent]
         paddr = self.inodes[pnum].getAddr()
