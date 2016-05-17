@@ -245,9 +245,10 @@ class fs:
 
         inum = self.nameToInum[tfile]
 
-    # YOUR CODE, YOUR ID
+    # YOUR CODE, 2012011304
         # IF inode.refcnt ==1, THEN free data blocks first, then free inode, ELSE dec indoe.refcnt
         # remove from parent directory: delete from parent inum, delete from parent addr
+        _INODE = self.inodes[inum];
     # DONE
 
         # finally, remove from files list
