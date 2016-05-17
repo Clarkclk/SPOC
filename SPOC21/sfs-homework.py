@@ -295,6 +295,37 @@ class fs:
     # DONE
         return tinum
 
+    def createSoftLink(self, target, newfile, parent):
+    # YOUR CODE, 2012011304
+        # find info about parent
+        pnum = self.nameToInum[parent]
+        paddr = self.inode[pnum].getAddr()
+
+        # is there room in the parent directory?
+        if self.data[paddr].getFreeEntries() == 0:
+            return -1
+
+        # if the newfile was already in parent dir?
+        if self.data[paddr].dirEntryExists(newfile):
+            return -1
+
+        # now, find inumber of target, and createSoftLink() is different from
+            #createLink() here
+        tinum = self.inodeAlloc()
+        taddr = self.dataAlloc()
+        self.inodes[tinum].setAll('s', taddr, 1)
+        self.data[taddr].setType('s')
+        self.data[taddr].setTarget(target)
+
+        # inc parent ref count
+        self.inodes[pnum].incRefCnt()
+
+        # now add to directory
+        self.data[paddr].addDirEntry(newfile, tinum)
+
+    # DONE
+        return tinum
+
     def createFile(self, parent, newfile, ftype):
     # YOUR CODE, 2012011304
         # find info about parent
@@ -382,6 +413,32 @@ class fs:
 
         dprint('try createLink(%s %s %s)' % (target, nfile, parent))
         inum = self.createLink(target, nfile, parent)
+        if inum >= 0:
+            self.files.append(fullName)
+            self.nameToInum[fullName] = inum
+            if printOps:
+                print 'link("%s", "%s");' % (target, fullName)
+            return 0
+        return -1
+
+    def doSoftLink(self):
+        dprint('doSoftLink')
+        if len(self.files) == 0:
+            return -1
+        parent = self.dirs[int(random.random() * len(self.dirs))]
+        nfile = self.makeName()
+
+        # pick random target
+        target = self.files[int(random.random() * len(self.files))]
+
+        # get full name of newfile
+        if parent == '/':
+            fullName = parent + nfile
+        else:
+            fullName = parent + '/' + nfile
+
+        dprint('try createSoftLink(%s %s %s)' % (target, nfile, parent))
+        inum = self.createSoftLink(target, nfile, parent)
         if inum >= 0:
             self.files.append(fullName)
             self.nameToInum[fullName] = inum
