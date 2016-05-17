@@ -272,7 +272,7 @@ class fs:
     # YOUR CODE, 2012011304
         # find info about parent
         pnum = self.nameToInum[parent]
-        paddr = self.inode[pnum].getAddr()
+        paddr = self.inodes[pnum].getAddr()
 
         # is there room in the parent directory?
         if self.data[paddr].getFreeEntries() == 0:
@@ -351,7 +351,7 @@ class fs:
             self.data[iaddr].addDirEntry('..', pnum)
 
         # now ok to init inode properly
-        self.inodes[inum].setAll('d', iaddr, 2)
+            self.inodes[inum].setAll('d', iaddr, 2)
 
         # inc parent ref count
         self.inodes[pnum].incRefCnt()
